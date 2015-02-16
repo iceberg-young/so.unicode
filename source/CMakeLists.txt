@@ -4,10 +4,10 @@ project(so.unicode)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(SOURCE_FILES
+    mbcs.cpp
     utf8.cpp
     utf16.cpp
     utf32.cpp
-    wild.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})

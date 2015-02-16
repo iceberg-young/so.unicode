@@ -5,9 +5,9 @@
 #include <stdexcept>
 
 namespace so {
-    std::string utf8(const std::string& wild, const char* encoding = "");
+    std::string utf8(const std::string& mbcs, const char* encoding = "");
 
-    std::string wild(const std::string& utf8, const char* encoding = "");
+    std::string mbcs(const std::string& utf8, const char* encoding = "");
 
     std::string utf8(const std::u16string& utf16);
 

@@ -5,6 +5,7 @@ namespace so {
     template<typename Tout, typename Tin>
     inline Tout utf32_indirect(const Tin& in) {
         Tout out;
+        out.reserve(in.size());
         auto i = in.cbegin();
         auto e = in.cend();
         while (i != e) {
@@ -14,9 +15,10 @@ namespace so {
     }
 
     template<typename Tout>
-    inline Tout utf32_direct(const std::u32string& code) {
+    inline Tout utf32_direct(const std::u32string& in) {
         Tout out;
-        for (auto c : code) {
+        out.reserve(in.size());
+        for (auto c : in) {
             out += c;
         }
         return out;
