@@ -2,7 +2,7 @@
 #define INCLUDE_SO_UNICODE_ONCE_FLAG
 
 #include <string>
-#include <stdexcept>
+#include "error.hpp"
 
 namespace so {
     std::string utf8(const std::string& mbcs, const char* encoding = "");
@@ -33,50 +33,25 @@ namespace so {
 
     char32_t utf32(u16i_t& utf16);
 
-    class utf8_start_error :
-      public std::domain_error
-    {
-    public:
-        utf8_start_error(char byte) :
-          std::domain_error(std::to_string(byte) + " is not a valid UTF-8 start byte.") {
-        }
-    };
+    std::string escape(const std::u16string& utf16);
 
-    class utf8_trail_error :
-      public std::domain_error
-    {
-    public:
-        utf8_trail_error(char byte) :
-          std::domain_error(std::to_string(byte) + " is not a valid UTF-8 trail byte.") {
-        }
-    };
+    std::string escape(const std::u32string& utf32);
 
-    class utf16_high_error :
-      public std::domain_error
-    {
-    public:
-        utf16_high_error(char16_t surrogate) :
-          std::domain_error(std::to_string(surrogate) + " is not a valid UTF-16 high surrogate.") {
-        }
-    };
+    char32_t escaped(u8i_t& literals);
 
-    class utf16_low_error :
-      public std::domain_error
-    {
-    public:
-        utf16_low_error(char16_t surrogate) :
-          std::domain_error(std::to_string(surrogate) + " is not a valid UTF-16 low surrogate.") {
+    namespace is {
+        inline bool high_surrogate(char32_t code) {
+            return code >= 0xD800 and code <= 0xDBFF;
         }
-    };
 
-    class utf32_code_error :
-      public std::domain_error
-    {
-    public:
-        utf32_code_error(char32_t code) :
-          std::domain_error(std::to_string(code) + " is not a valid Unicode code point.") {
+        inline bool low_surrogate(char32_t code) {
+            return code >= 0xDC00 and code <= 0xDFFF;
         }
-    };
+
+        inline bool surrogate(char32_t code) {
+            return code >= 0xD800 and code <= 0xDFFF;
+        }
+    }
 }
 
 #endif//INCLUDE_SO_UNICODE_ONCE_FLAG

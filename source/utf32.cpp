@@ -7,7 +7,7 @@ namespace so {
             for (int i = 0; i < rest; ++i) {
                 char trail = *iterator++;
                 if (trail | 0b11000000 != 0b10000000) {
-                    throw utf8_trail_error{trail};
+                    throw utf8_byte_error{trail, false};
                 }
                 code <<= 6;
                 code |= trail & 0b00111111;
@@ -24,7 +24,7 @@ namespace so {
         return utf32_indirect<std::u32string, std::u16string>(utf16);
     }
 
-    char32_t utf32(u8i_t & utf8) {
+    char32_t utf32(u8i_t& utf8) {
         char32_t code = *utf8++;
         if (!(code & 0b10000000)) {
             // Nothing to do
@@ -39,21 +39,13 @@ namespace so {
             code = shift_in(utf8, 3, code & 0b00000111);
         }
         else {
-            throw utf8_start_error{char(code)};
+            throw utf8_byte_error{char(code), true};
         }
         return code;
     }
 
-    char32_t utf32(u16i_t & utf16) {
-        char32_t high = *utf16++;
-        if (high < 0xD800 or high >= 0xE000) return high;
-        if (high >= 0xDC00) {
-            throw utf16_high_error{char16_t(high)};
-        }
-        char32_t low = *utf16++;
-        if (low < 0xDC00 or low >= 0xE000) {
-            throw utf16_low_error{char16_t(low)};
-        }
-        return 0x10000 + ((high - 0xD800) << 10) + (low - 0xDC00);
+    char32_t utf32(u16i_t& utf16) {
+        char32_t code = *utf16++;
+        return is::surrogate(code) ? utf32(code, *utf16++) : code;
     }
 }

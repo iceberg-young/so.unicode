@@ -8,6 +8,7 @@ set(SOURCE_FILES
     utf8.cpp
     utf16.cpp
     utf32.cpp
+    escape.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
