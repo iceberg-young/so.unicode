@@ -5,12 +5,12 @@
 namespace so {
     namespace {
         template<typename in_t>
-        std::string escape(const in_t& literals, const std::string& prefix, size_t width) {
+        std::string escape(const in_t& literals, char prefix, size_t width) {
             std::stringstream ss;
             ss.fill('0');
             ss << std::hex;
             for (auto c : literals) {
-                ss << prefix;
+                ss << '\\' << prefix;
                 ss.width(width);
                 ss << c;
             }
@@ -40,11 +40,11 @@ namespace so {
     }
 
     std::string escape(const std::u16string& utf16) {
-        return escape(utf16, "\\u", 4);
+        return escape(utf16, 'u', 4);
     }
 
     std::string escape(const std::u32string& utf32) {
-        return escape(utf32, "\\U", 8);
+        return escape(utf32, 'U', 8);
     }
 
     char32_t escaped(u8i_t& literals) {
