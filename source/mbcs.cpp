@@ -16,41 +16,37 @@ namespace so {
             }
 
         public:
-            void reset() {
-                iconv(this->ic, nullptr, nullptr, nullptr, nullptr);
-            }
-
             void convert(const std::string& source, std::string& target) {
-                constexpr size_t BUFFER_MIN_SIZE = 8;
-                std::vector<char> buffer(std::max(source.size(), BUFFER_MIN_SIZE));
+                std::vector<char> buffer(std::max(source.size(), 8ul/*minimal reserve; arbitrary choice*/));
                 auto in = const_cast<char*>(&source[0]);
-                auto in_size = source.size();
-                while (in_size) {
+                auto in_left = source.size();
+                while (in_left) {
                     auto out = &buffer[0];
-                    auto out_size = buffer.size();
-                    iconv(this->ic, &in, &in_size, &out, &out_size);
-                    auto length = buffer.size() - out_size;
+                    auto out_left = buffer.size();
+                    iconv(this->ic, &in, &in_left, &out, &out_left);
+                    auto length = buffer.size() - out_left;
+                    if (length > 0) {
+                        target.append(&buffer[0], length);
+                    }
                     switch (errno) {
                         case E2BIG: {
-                            if (!length) {
-                                throw std::out_of_range("*Implementation Fault!*"
-                                  "The output buffer cannot hold a single character of the target encoding."
-                                );
+                            if (length == 0) {
+                                // The output buffer is too small to hold even a single character.
+                                buffer.resize(buffer.size() * 2);
                             }
                             break;
                         }
                         case EILSEQ: {
                             throw std::range_error("An illegal sequence has been encountered @"
-                              + std::to_string(source.size() - in_size)
+                              + std::to_string(source.size() - in_left)
                             );
                         }
                         case EINVAL: {
                             throw std::length_error("An incomplete sequence has been encountered @"
-                              + std::to_string(source.size() - in_size)
+                              + std::to_string(source.size() - in_left)
                             );
                         }
                     }
-                    target.append(&buffer[0], length);
                 }
             }
 
