@@ -26,16 +26,16 @@ namespace so {
 
     char32_t utf32(u8i_t& utf8) {
         char32_t code = *utf8++;
-        if (!(code & 0b10000000)) {
+        if (~code & 0b10000000) {
             // Nothing to do
         }
-        else if (!(code & 0b00100000)) { // 0b110xxxxx
+        else if (~code & 0b00100000) {   // 0b110xxxxx
             code = shift_in(utf8, 1, code & 0b00011111);
         }
-        else if (!(code & 0b00010000)) { // 0b1110xxxx
+        else if (~code & 0b00010000) {   // 0b1110xxxx
             code = shift_in(utf8, 2, code & 0b00001111);
         }
-        else if (!(code & 0b00001000)) { // 0b11110xxx
+        else if (~code & 0b00001000) {   // 0b11110xxx
             code = shift_in(utf8, 3, code & 0b00000111);
         }
         else {
