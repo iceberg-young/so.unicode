@@ -1,14 +1,9 @@
 #include <iostream>
+#include "include/unicode.hpp"
 
 using namespace std;
 
 int main() {
-    char o = -5;
-    char16_t h = o;
-    char32_t x = h;
-    cout << hex
-      << int(o) << '\t'
-      << int(h) << '\t'
-      << int(x) << endl;
+    cout << so::escape(u"\u1234\uB801\uBC02\u4321");
     return 0;
 }

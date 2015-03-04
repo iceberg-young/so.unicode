@@ -6,8 +6,8 @@ namespace so {
     inline out_t utf32_indirect(const in_t& in) {
         out_t out;
         out.reserve(in.size());
-        auto i = in.cbegin();
-        auto e = in.cend();
+        auto i = in.begin();
+        auto e = in.end();
         while (i != e) {
             out += utf32(i);
         }

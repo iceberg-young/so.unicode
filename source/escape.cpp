@@ -1,20 +1,22 @@
-#include <sstream>
 #include "unicode.hpp"
 #include "cast.hpp"
 
 namespace so {
     namespace {
         template<typename in_t>
-        std::string escape(const in_t& literals, char prefix, size_t width) {
-            std::stringstream ss;
-            ss.fill('0');
-            ss << std::hex;
+        std::string escape(const in_t& literals, char prefix, int width) {
+            std::string s;
+            s.reserve(literals.length() * (2 + width));
             for (auto c : literals) {
-                ss << '\\' << prefix;
-                ss.width(width);
-                ss << c;
+                s += '\\';
+                s += prefix;
+                auto count = width;
+                while (count--) {
+                    auto q = c >> count * 4 & 0xF;
+                    s += (q < 10 ? '0' : 'A' - 10) + q;
+                }
             }
-            return ss.str();
+            return s;
         }
 
         char32_t hex(u8i_t& literals, int amount) {
@@ -58,7 +60,7 @@ namespace so {
             case 'u': {
                 char32_t code = hex(++literals, 4);
                 if (is::high_surrogate(code)) {
-                    code = utf32(code, escaped(literals));
+                    code = utf32(code, escaped(literals)); // TODO refactoring
                 }
                 return code;
             }
