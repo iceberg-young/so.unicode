@@ -37,12 +37,12 @@ namespace so {
                             break;
                         }
                         case EILSEQ: {
-                            throw std::range_error("An illegal sequence has been encountered @"
+                            throw unicode_cast_error("An illegal sequence has been encountered @"
                               + std::to_string(source.size() - in_left)
                             );
                         }
                         case EINVAL: {
-                            throw std::length_error("An incomplete sequence has been encountered @"
+                            throw unicode_cast_error("An incomplete sequence has been encountered @"
                               + std::to_string(source.size() - in_left)
                             );
                         }

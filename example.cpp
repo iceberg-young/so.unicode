@@ -4,6 +4,8 @@
 using namespace std;
 
 int main() {
-    cout << so::escape(u"\u1234\uB801\uBC02\u4321");
+    string l{"\\uD801\\uDC02"};
+    auto i = l.cbegin();
+    cout << so::unicode::escape(u"\u1234\xD801\xDC02\u4321") << '\t' << so::unicode::escaped(i);
     return 0;
 }
