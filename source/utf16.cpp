@@ -12,7 +12,7 @@ namespace so {
             utf16 += char16_t(code & 0x03FF + 0xDC00);
         }
         else {
-            throw utf32_code_error{code};
+            throw unicode_cast_error{std::to_string(code) + " is not a valid code point."};
         }
         return utf16;
     }

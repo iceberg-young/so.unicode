@@ -7,7 +7,7 @@ namespace so {
             for (int i = 0; i < rest; ++i) {
                 char trail = *iterator++;
                 if (trail | 0b11000000 != 0b10000000) {
-                    throw utf8_byte_error{trail, false};
+                    throw unicode_cast_error{std::to_string(trail) + " is not a valid UTF-8 trail byte."};
                 }
                 code <<= 6;
                 code |= trail & 0b00111111;
@@ -39,7 +39,7 @@ namespace so {
             code = shift_in(utf8, 3, code & 0b00000111);
         }
         else {
-            throw utf8_byte_error{char(code), true};
+            throw unicode_cast_error{std::to_string(code) + " is not a valid UTF-8 start byte."};
         }
         return code;
     }

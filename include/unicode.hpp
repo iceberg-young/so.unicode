@@ -2,7 +2,7 @@
 #define INCLUDE_SO_UNICODE_ONCE_FLAG
 
 #include <string>
-#include "error.hpp"
+#include <stdexcept>
 
 namespace so {
     std::string utf8(const std::string& mbcs, const char* encoding = "");
@@ -38,6 +38,15 @@ namespace so {
     std::string escape(const std::u32string& utf32);
 
     char32_t escaped(u8i_t& literals);
+
+    class unicode_cast_error :
+      public std::domain_error
+    {
+    public:
+        unicode_cast_error(const std::string& what) :
+          std::domain_error(what) {
+        }
+    };
 
     namespace is {
         inline bool high_surrogate(char32_t code) {

@@ -34,7 +34,7 @@ namespace so {
                     value += quad - 'a' + 10;
                 }
                 else {
-                    throw unicode_escape_error{"Hexadigit (0-9, A-F, or a-f) is expected."};
+                    throw unicode_cast_error{"Hexadigit (0-9, A-F, or a-f) is expected."};
                 }
             }
             return value;
@@ -51,7 +51,7 @@ namespace so {
 
     char32_t escaped(u8i_t& literals) {
         if (*literals != '\\') {
-            throw unicode_escape_error{"Back slash (\\) is expected."};
+            throw unicode_cast_error{"Back slash (\\) is expected."};
         }
         switch (*++literals) {
             case 'U': {
@@ -65,7 +65,7 @@ namespace so {
                 return code;
             }
             default: {
-                throw unicode_escape_error{"'U' or 'u' is expected."};
+                throw unicode_cast_error{"'U' or 'u' is expected."};
             }
         }
     }
