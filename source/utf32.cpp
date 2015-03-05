@@ -6,7 +6,7 @@ namespace so {
         char32_t shift_in(unicode::u8i_t& iterator, int rest, char32_t code) {
             for (int i = 0; i < rest; ++i) {
                 char trail = *iterator++;
-                if (trail | 0b11000000 != 0b10000000) {
+                if ((trail | 0b11000000) != 0b10000000) {
                     throw unicode_cast_error{std::to_string(trail) + " is not a valid UTF-8 trail byte."};
                 }
                 code <<= 6;

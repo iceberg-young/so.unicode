@@ -9,7 +9,7 @@ namespace so {
         else if (code <= 0x10FFFF) {
             code -= 0x10000;
             utf16 += char16_t((code >> 10) + 0xD800);
-            utf16 += char16_t(code & 0x03FF + 0xDC00);
+            utf16 += char16_t((code & 0x03FF) + 0xDC00);
         }
         else {
             throw unicode_cast_error{std::to_string(code) + " is not a valid code point."};

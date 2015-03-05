@@ -3,20 +3,20 @@
 
 namespace so {
     namespace {
-        inline char couple(char32_t code) {
-            return (code >> 6) & 0b00011111 | 0b11000000;
+        char couple(char32_t code) {
+            return ((code >> 6) & 0b00011111) | 0b11000000;
         }
 
-        inline char triple(char32_t code) {
-            return (code >> 12) & 0b00001111 | 0b11100000;
+        char triple(char32_t code) {
+            return ((code >> 12) & 0b00001111) | 0b11100000;
         }
 
-        inline char quad(char32_t code) {
-            return (code >> 18) & 0b00000111 | 0b11110000;
+        char quad(char32_t code) {
+            return ((code >> 18) & 0b00000111) | 0b11110000;
         }
 
-        inline char trail(char32_t code) {
-            return code & 0b00111111 | 0b10000000;
+        char trail(char32_t code) {
+            return (code & 0b00111111) | 0b10000000;
         }
     }
 
