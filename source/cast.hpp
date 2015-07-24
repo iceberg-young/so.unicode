@@ -32,10 +32,14 @@ namespace so {
 
     inline char32_t utf32(char16_t high, char16_t low) {
         if (!is::high_surrogate(high)) {
-            throw unicode_cast_error{std::to_string(high) + " is not a valid high surrogate."};
+            throw unicode_cast_error{
+              std::to_string(high) + " is not a valid high surrogate."
+            };
         }
         if (!is::low_surrogate(low)) {
-            throw unicode_cast_error{std::to_string(low) + " is not a valid low surrogate."};
+            throw unicode_cast_error{
+              std::to_string(low) + " is not a valid low surrogate."
+            };
         }
         return 0x10000 + ((high - 0xD800) << 10) + (low - 0xDC00);
     }

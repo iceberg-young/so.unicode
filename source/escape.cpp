@@ -4,17 +4,19 @@
 namespace so {
     namespace unicode {
         namespace {
+            constexpr int DIGITS_PER_BYTE = 2;
+            constexpr int BITS_PER_DIGIT = 4;
+
             template<typename in_t>
             std::string escape(const in_t& literals, char prefix) {
+                constexpr auto width = sizeof(typename in_t::value_type) * DIGITS_PER_BYTE;
                 std::string s;
-                constexpr auto width = sizeof(typename in_t::value_type) * 2;
                 s.reserve(literals.length() * (2 + width));
                 for (auto c : literals) {
-                    s += '\\';
-                    s += prefix;
+                    (s += '\\') += prefix;
                     auto count = width;
                     while (count--) {
-                        auto q = c >> count * 4 & 0xF;
+                        auto q = c >> count * BITS_PER_DIGIT & 0xF;
                         s += (q < 10 ? '0' : 'A' - 10) + q;
                     }
                 }
@@ -24,8 +26,8 @@ namespace so {
             template<typename out_t>
             out_t hex(u8i_t& literals) {
                 out_t value = 0;
-                for (int i = 0; i < sizeof(out_t) * 2; ++i, ++literals) {
-                    value <<= 4;
+                for (int i = 0; i < sizeof(out_t) * DIGITS_PER_BYTE; ++i, ++literals) {
+                    value <<= BITS_PER_DIGIT;
                     char quad = *literals;
                     if (quad >= '0' and quad <= '9') {
                         value += quad - '0';
@@ -37,7 +39,9 @@ namespace so {
                         value += quad - 'a' + 10;
                     }
                     else {
-                        throw unicode_cast_error{"Hexadigit (0-9, A-F, or a-f) is expected."};
+                        throw unicode_cast_error{
+                          "Hexadigit (0-9, A-F, or a-f) is expected."
+                        };
                     }
                 }
                 return value;
@@ -64,10 +68,14 @@ namespace so {
                     char16_t code = hex<char16_t>(++literals);
                     if (not is::high_surrogate(code)) return code;
                     if (*literals != '\\') {
-                        throw unicode_cast_error{"Back slash (\\) is expected, for low surrogate."};
+                        throw unicode_cast_error{
+                          "Back slash (\\) is expected, for low surrogate."
+                        };
                     }
                     if (*++literals != 'u') {
-                        throw unicode_cast_error{"'u' is expected, for low surrogate."};
+                        throw unicode_cast_error{
+                          "'u' is expected, for low surrogate."
+                        };
                     }
                     return utf32(code, hex<char16_t>(++literals));
                 }

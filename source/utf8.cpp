@@ -40,7 +40,9 @@ namespace so {
             utf8 += trail(code);
         }
         else {
-            throw unicode_cast_error{std::to_string(code) + " is not a valid code point."};
+            throw unicode_cast_error{
+              std::to_string(code) + " is not a valid code point."
+            };
         }
         return utf8;
     }

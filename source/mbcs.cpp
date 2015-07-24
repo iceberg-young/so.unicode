@@ -1,12 +1,11 @@
+#include "unicode.hpp"
 #include <vector>
 #include <iconv.h>
-#include "unicode.hpp"
 
 namespace so {
     namespace {
-        class ic_raii
-        {
-        public:
+        class ic_raii {
+         public:
             ic_raii(const char* source, const char* target) :
               ic(iconv_open(target, source)) {
             }
@@ -15,18 +14,18 @@ namespace so {
                 iconv_close(this->ic);
             }
 
-        public:
+         public:
             void convert(const std::string& source, std::string& target) {
                 std::vector<char> buffer(std::max(source.size(), 8ul/*minimal reserve; arbitrary choice*/));
-                auto in = const_cast<char*>(&source[0]);
+                auto in = const_cast<char*>(source.data());
                 auto in_left = source.size();
                 while (in_left) {
-                    auto out = &buffer[0];
+                    auto out = buffer.data();
                     auto out_left = buffer.size();
                     iconv(this->ic, &in, &in_left, &out, &out_left);
                     auto length = buffer.size() - out_left;
                     if (length > 0) {
-                        target.append(&buffer[0], length);
+                        target.append(buffer.data(), length);
                     }
                     switch (errno) {
                         case E2BIG: {
@@ -37,20 +36,22 @@ namespace so {
                             break;
                         }
                         case EILSEQ: {
-                            throw unicode_cast_error("An illegal sequence has been encountered @"
-                              + std::to_string(source.size() - in_left)
-                            );
+                            throw unicode_cast_error{
+                              "An illegal sequence has been encountered @"
+                                + std::to_string(source.size() - in_left)
+                            };
                         }
                         case EINVAL: {
-                            throw unicode_cast_error("An incomplete sequence has been encountered @"
-                              + std::to_string(source.size() - in_left)
-                            );
+                            throw unicode_cast_error{
+                              "An incomplete sequence has been encountered @"
+                                + std::to_string(source.size() - in_left)
+                            };
                         }
                     }
                 }
             }
 
-        private:
+         private:
             iconv_t ic;
         };
     }

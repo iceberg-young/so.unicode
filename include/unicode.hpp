@@ -42,12 +42,10 @@ namespace so {
     char32_t utf32(unicode::u16i_t& utf16);
 
     class unicode_cast_error :
-      public std::domain_error
-    {
-    public:
+      public std::domain_error {
+     public:
         unicode_cast_error(const std::string& what) :
-          std::domain_error(what) {
-        }
+          domain_error(what) {}
     };
 
     namespace is {
