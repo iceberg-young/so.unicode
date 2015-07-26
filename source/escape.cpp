@@ -4,20 +4,21 @@
 namespace so {
     namespace unicode {
         namespace {
-            constexpr int DIGITS_PER_BYTE = 2;
-            constexpr int BITS_PER_DIGIT = 4;
+            constexpr int bits_per_digit = 4;
+            constexpr int digits_per_byte = 2;
+            constexpr int prefixes_per_esc = 2; // E.g. "\u" or "\U"
 
             template<typename in_t>
             std::string escape(const in_t& literals, char prefix) {
-                constexpr auto width = sizeof(typename in_t::value_type) * DIGITS_PER_BYTE;
+                constexpr int width = sizeof(typename in_t::value_type) * digits_per_byte;
                 std::string s;
-                s.reserve(literals.length() * (2 + width));
+                s.reserve(literals.length() * (prefixes_per_esc + width));
                 for (auto c : literals) {
                     (s += '\\') += prefix;
-                    auto count = width;
+                    int count = width;
                     while (count--) {
-                        auto q = c >> count * BITS_PER_DIGIT & 0xF;
-                        s += (q < 10 ? '0' : 'A' - 10) + q;
+                        auto q = c >> count * bits_per_digit & 0xF;
+                        s += char((q < 10 ? '0' : 'A' - 0xA) + q);
                     }
                 }
                 return s;
@@ -26,17 +27,17 @@ namespace so {
             template<typename out_t>
             out_t hex(u8i_t& literals) {
                 out_t value = 0;
-                for (int i = 0; i < sizeof(out_t) * DIGITS_PER_BYTE; ++i, ++literals) {
-                    value <<= BITS_PER_DIGIT;
+                for (int i = 0; i < sizeof(out_t) * digits_per_byte; ++i, ++literals) {
+                    value <<= bits_per_digit;
                     char quad = *literals;
                     if (quad >= '0' and quad <= '9') {
                         value += quad - '0';
                     }
                     else if (quad >= 'A' and quad <= 'F') {
-                        value += quad - 'A' + 10;
+                        value += quad - 'A' + 0xA;
                     }
                     else if (quad >= 'a' and quad <= 'f') {
-                        value += quad - 'a' + 10;
+                        value += quad - 'a' + 0xa;
                     }
                     else {
                         throw unicode_cast_error{

@@ -18,7 +18,7 @@ namespace so {
     inline out_t utf32_direct(const std::u32string& in) {
         out_t out;
         out.reserve(in.size());
-        for (auto c : in) {
+        for (char32_t c : in) {
             out += c;
         }
         return out;

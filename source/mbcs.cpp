@@ -17,13 +17,13 @@ namespace so {
          public:
             void convert(const std::string& source, std::string& target) {
                 std::vector<char> buffer(std::max(source.size(), 8ul/*minimal reserve; arbitrary choice*/));
-                auto in = const_cast<char*>(source.data());
-                auto in_left = source.size();
+                char* in = const_cast<char*>(source.data());
+                size_t in_left = source.size();
                 while (in_left) {
-                    auto out = buffer.data();
-                    auto out_left = buffer.size();
+                    char* out = buffer.data();
+                    size_t out_left = buffer.size();
                     iconv(this->ic, &in, &in_left, &out, &out_left);
-                    auto length = buffer.size() - out_left;
+                    size_t length = buffer.size() - out_left;
                     if (length > 0) {
                         target.append(buffer.data(), length);
                     }
