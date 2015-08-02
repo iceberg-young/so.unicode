@@ -1,7 +1,9 @@
-so.unicode
-==========
+so.utf
+======
 
 [UTF-8 everywhere!][u8e]
+
+Convert from/to UTF-8 encoding.
 
 
 License

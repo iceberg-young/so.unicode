@@ -1,4 +1,9 @@
-#include "unicode.hpp"
+/**
+ * @copyright 2015 Iceberg YOUNG
+ * @license GNU Lesser General Public License version 3
+ */
+
+#include "utf.hpp"
 #include "cast.hpp"
 
 namespace so {

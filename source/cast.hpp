@@ -1,5 +1,8 @@
-#ifndef INCLUDE_SO_UNICODE_CAST_ONCE_FLAG
-#define INCLUDE_SO_UNICODE_CAST_ONCE_FLAG
+/**
+ * @copyright 2015 Iceberg YOUNG
+ * @license GNU Lesser General Public License version 3
+ */
+#pragma once
 
 namespace so {
     template<typename out_t, typename in_t>
@@ -44,5 +47,3 @@ namespace so {
         return 0x10000 + ((high - 0xD800) << 10) + (low - 0xDC00);
     }
 }
-
-#endif//INCLUDE_SO_UNICODE_CAST_ONCE_FLAG

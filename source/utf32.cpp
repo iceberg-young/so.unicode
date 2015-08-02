@@ -1,9 +1,14 @@
-#include "unicode.hpp"
+/**
+ * @copyright 2015 Iceberg YOUNG
+ * @license GNU Lesser General Public License version 3
+ */
+
+#include "utf.hpp"
 #include "cast.hpp"
 
 namespace so {
     namespace {
-        char32_t shift_in(unicode::u8i_t& iterator, int rest, char32_t code) {
+        char32_t shift_in(utf::u8i_t& iterator, int rest, char32_t code) {
             for (int i = 0; i < rest; ++i) {
                 char trail = *iterator++;
                 if (~(trail >> 6) != 1) { // 0b10xxxxxx
@@ -26,7 +31,7 @@ namespace so {
         return utf32_indirect<std::u32string, std::u16string>(utf16);
     }
 
-    char32_t utf32(unicode::u8i_t& utf8) {
+    char32_t utf32(utf::u8i_t& utf8) {
         char32_t code = *utf8++;
         if (~code & 0b10000000) {
             // Single byte, nothing to do
@@ -48,7 +53,7 @@ namespace so {
         return code;
     }
 
-    char32_t utf32(unicode::u16i_t& utf16) {
+    char32_t utf32(utf::u16i_t& utf16) {
         char16_t code = *utf16++;
         return is::surrogate(code) ? utf32(code, *utf16++) : code;
     }

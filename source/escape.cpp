@@ -1,8 +1,13 @@
-#include "unicode.hpp"
+/**
+ * @copyright 2015 Iceberg YOUNG
+ * @license GNU Lesser General Public License version 3
+ */
+
+#include "utf.hpp"
 #include "cast.hpp"
 
 namespace so {
-    namespace unicode {
+    namespace utf {
         namespace {
             constexpr int bits_per_digit = 4;
             constexpr int digits_per_byte = 2;
