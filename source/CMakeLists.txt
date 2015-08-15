@@ -4,7 +4,6 @@ project(so.utf)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 set(SOURCE_FILES
-    mbcs.cpp
     utf8.cpp
     utf16.cpp
     utf32.cpp
@@ -12,4 +11,5 @@ set(SOURCE_FILES
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
+add_library(${PROJECT_NAME}-mbcs STATIC mbcs.cpp)
 include_directories(../include)

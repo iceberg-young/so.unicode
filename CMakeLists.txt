@@ -8,5 +8,5 @@ set(SOURCE_FILES example.cpp)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 add_subdirectory(source)
-add_dependencies(${PROJECT_NAME} so.utf)
-target_link_libraries(${PROJECT_NAME} so.utf)
+add_dependencies(${PROJECT_NAME} so.utf so.utf-mbcs)
+target_link_libraries(${PROJECT_NAME} so.utf so.utf-mbcs)
