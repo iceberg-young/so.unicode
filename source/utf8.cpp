@@ -8,19 +8,7 @@
 
 namespace so {
     namespace {
-        char couple(char32_t code) {
-            return ((code >> 6) & 0b00011111) | 0b11000000;
-        }
-
-        char triple(char32_t code) {
-            return ((code >> 12) & 0b00001111) | 0b11100000;
-        }
-
-        char quad(char32_t code) {
-            return ((code >> 18) & 0b00000111) | 0b11110000;
-        }
-
-        char trail(char32_t code) {
+        char body(char32_t code) {
             return (code & 0b00111111) | 0b10000000;
         }
     }
@@ -30,19 +18,19 @@ namespace so {
             utf8 += char(code);
         }
         else if (code <= 0x07FF) {
-            utf8 += couple(code);
-            utf8 += trail(code);
+            utf8 += char(((code >>  6) & 0b00011111) | 0b11000000);
+            utf8 += body(code);
         }
         else if (code <= 0xFFFF) {
-            utf8 += triple(code);
-            utf8 += trail(code >> 6);
-            utf8 += trail(code);
+            utf8 += char(((code >> 12) & 0b00001111) | 0b11100000);
+            utf8 += body(code >> 6);
+            utf8 += body(code);
         }
         else if (code <= 0x10FFFF) {
-            utf8 += quad(code);
-            utf8 += trail(code >> 12);
-            utf8 += trail(code >> 6);
-            utf8 += trail(code);
+            utf8 += char(((code >> 18) & 0b00000111) | 0b11110000);
+            utf8 += body(code >> 12);
+            utf8 += body(code >> 6);
+            utf8 += body(code);
         }
         else {
             throw unicode_cast_error{

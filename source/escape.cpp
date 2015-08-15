@@ -11,26 +11,27 @@ namespace so {
         namespace {
             constexpr int bits_per_digit = 4;
             constexpr int digits_per_byte = 2;
-            constexpr int prefixes_per_esc = 2; // E.g. "\u" or "\U"
+            constexpr char hex_digits[]{"0123456789ABCDEF"};
 
             template<typename in_t>
-            std::string escape(const in_t& literals, char prefix) {
+            std::string encode(const in_t& literals, char prefix) {
                 constexpr int width = sizeof(typename in_t::value_type) * digits_per_byte;
+
                 std::string s;
-                s.reserve(literals.length() * (prefixes_per_esc + width));
+                s.reserve(literals.length() * (width + 2)); // +2: "\u" or "\U"
                 for (auto c : literals) {
                     (s += '\\') += prefix;
                     int count = width;
                     while (count--) {
-                        auto q = c >> count * bits_per_digit & 0xF;
-                        s += char((q < 10 ? '0' : 'A' - 0xA) + q);
+                        auto q = c >> (count * bits_per_digit);
+                        s += hex_digits[q & 0xF];
                     }
                 }
                 return s;
             }
 
             template<typename out_t>
-            out_t hex(u8i_t& literals) {
+            out_t decode(u8i_t& literals) {
                 out_t value = 0;
                 for (int i = 0; i < sizeof(out_t) * digits_per_byte; ++i, ++literals) {
                     value <<= bits_per_digit;
@@ -42,7 +43,7 @@ namespace so {
                         value += quad - 'A' + 0xA;
                     }
                     else if (quad >= 'a' and quad <= 'f') {
-                        value += quad - 'a' + 0xa;
+                        value += quad - 'a' + 0Xa;
                     }
                     else {
                         throw unicode_cast_error{
@@ -55,11 +56,11 @@ namespace so {
         }
 
         std::string escape(const std::u16string& utf16) {
-            return escape(utf16, 'u');
+            return encode(utf16, 'u');
         }
 
         std::string escape(const std::u32string& utf32) {
-            return escape(utf32, 'U');
+            return encode(utf32, 'U');
         }
 
         char32_t escaped(u8i_t& literals) {
@@ -68,10 +69,10 @@ namespace so {
             }
             switch (*++literals) {
                 case 'U': {
-                    return hex<char32_t>(++literals);
+                    return decode<char32_t>(++literals);
                 }
                 case 'u': {
-                    char16_t code = hex<char16_t>(++literals);
+                    char16_t code = decode<char16_t>(++literals);
                     if (not is::high_surrogate(code)) return code;
                     if (*literals != '\\') {
                         throw unicode_cast_error{
@@ -83,7 +84,7 @@ namespace so {
                           "'u' is expected, for low surrogate."
                         };
                     }
-                    return utf32(code, hex<char16_t>(++literals));
+                    return utf32(code, decode<char16_t>(++literals));
                 }
                 default: {
                     throw unicode_cast_error{"'U' or 'u' is expected."};
