@@ -1,0 +1,36 @@
+{
+	"name": "so.utf",
+	"version": "1.0.0",
+	"license": "LGPL-3.0",
+	"author": "Iceberg YOUNG <iceberg.young@gmail.com>",
+	"keywords": [
+		"UTF 8",
+		"UTF 16",
+		"UTF 32"
+	],
+	"provides": {
+		"^": "include",
+		"$": {
+			"type": "lib",
+			"rule": "archive",
+			"source": {
+				"source/*.cpp": "compile",
+				"source/mbcs.cpp": ""
+			}
+		},
+		"$-mbcs": {
+			"type": "lib",
+			"rule": "archive",
+			"source": {
+				"source/mbcs.cpp": "compile"
+			}
+		}
+	},
+	"tests": {
+		"example": {
+			"source": {
+				"example.cpp": "compile"
+			}
+		}
+	}
+}
